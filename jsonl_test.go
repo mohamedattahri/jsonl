@@ -16,10 +16,12 @@ var FixtureString = `{"name":"Gilbert","wins":[["straight","7♣"],["one pair","
 var FixturesStringComments = `{"name":"Gilbert","wins":[["straight","7♣"],["one pair","10♥"]]}
 // first comment
 # second comment
+
 {"name":"Alexa","wins":[["two pair","4♠"],["two pair","9♠"]]}
 // third comment
 {"name":"May","wins":[]}
 # fourth comment
+
 {"name":"Deloise","wins":[["three of a kind","5♣"]]}`
 
 type Player struct {
@@ -126,4 +128,16 @@ func TestReadAll(t *testing.T) {
 	t.Run("with comments", func(t *testing.T) {
 		testReadAll(t, bytes.NewBufferString(FixturesStringComments))
 	})
+}
+
+func TestScannerError(t *testing.T) {
+	rd := bytes.NewBufferString(FixturesStringComments)
+	scan := jsonl.NewScanner(rd)
+	for scan.Next() {
+		continue
+	}
+	// blank lines should cause an error
+	if err := scan.Err(); err == nil {
+		t.Fatal("expected an error")
+	}
 }

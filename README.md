@@ -39,4 +39,9 @@ for s.Next() {
 
   log.Println(item)
 }
+
+// Check if an error occurred while scanning.
+if err := s.Err(); err != nil {
+  log.Fatalf("an error happened: %v", err)
+}
 ```

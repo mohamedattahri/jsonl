@@ -30,6 +30,9 @@ func ExampleScanner() {
 
 		log.Println(item)
 	}
+	if err := s.Err(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func ExampleWriter() {

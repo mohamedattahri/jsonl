@@ -47,19 +47,31 @@ type Scanner struct {
 	err  error
 }
 
+// Err returns the error, if any, that was
+// encountered while reading from the source.
+// If this error is not nil, it will also be
+// returned from Line.
+func (s *Scanner) Err() error {
+	if s.err == io.EOF {
+		return nil
+	}
+	return s.err
+}
+
 // Line returns the latest line read.
 func (s *Scanner) Line() (Line, error) {
-	if s.loc == 0 {
-		return nil, fmt.Errorf("jsonl: Next() must be called first")
-	}
-	if s.err != nil && s.err != io.EOF {
+	if s.Err() != nil {
 		return nil, s.err
+	}
+	if s.loc == 0 {
+		return nil, fmt.Errorf("jsonl: Next must be called first")
 	}
 	return s.line, nil
 }
 
-// Next returns true if there's a line
-// to read using [Line].
+// Next prepares the next result line for reading with the Line method.
+// It returns true on success, or false if there is no next result line or an error happened while preparing it.
+// Err should be consulted to distinguish between the two cases.
 func (s *Scanner) Next() bool {
 	if s.err != nil {
 		return false
@@ -83,8 +95,13 @@ func (s *Scanner) Next() bool {
 		s.loc++
 
 		raw = bytes.TrimRightFunc(raw, unicode.IsSpace)
-		if len(raw) == 0 && s.SkipBlank {
-			continue
+		if len(raw) == 0 {
+			if s.SkipBlank {
+				continue
+			} else {
+				err = fmt.Errorf("jsonl: invalid line (#%d)", s.loc)
+				return false
+			}
 		}
 		if hasPrefixAny(string(raw), s.SkipComments) {
 			continue
@@ -139,5 +156,5 @@ func ReadAll[T any](src io.Reader) ([]T, error) {
 		result = append(result, *v)
 	}
 
-	return result, nil
+	return result, s.Err()
 }
