@@ -1,10 +1,10 @@
-[![GoDoc reference](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/mohamed.attahri.life/jsonl)
+[![GoDoc reference](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/mohamed.attahri.com/jsonl)
 
 `jsonl` is a Go library to encode and decode [JSON Lines](https://jsonlines.org). It uses the standard library's JSON package.
 
 Go 1.20+ is required, because it relies on generics for type-safety.
 
-See [documentation](https://pkg.go.dev/mohamed.attahri.life/jsonl) for more details.
+See [documentation](https://pkg.go.dev/mohamed.attahri.com/jsonl) for more details.
 
 ## Encode
 
